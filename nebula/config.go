@@ -40,6 +40,7 @@ func newConfig() *config {
 		},
 		Relay: configRelay{
 			UseRelays: true,
+			releys: []string{"192.168.120.1"},
 		},
 		Cipher: "aes",
 		SSHD: configSSHD{
