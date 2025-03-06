@@ -5,7 +5,7 @@ on:
       tags:
         type: string
         required: true
-        default: "v0.0.1-1"
+        default: "0.0.1-1"
   push:
     tags:
       # Only builds for tags with a meaningless build number suffix: v1.0.0-1
@@ -54,8 +54,8 @@ jobs:
 
           cd android
           
-          echo "BUILD_NUMBER=v0.0.1-1" >> $GITHUB_ENV
-          echo "BUILD_NAME=aaaaa" >> $GITHUB_ENV
+          echo "BUILD_NUMBER=${{ inputs.tag}}" >> $GITHUB_ENV
+          echo "BUILD_NAME=nebula" >> $GITHUB_ENV
 
       - name: Build Android
         run: |
