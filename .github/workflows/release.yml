@@ -2,7 +2,7 @@ name: Create release and upload to Apple and Google
 on:
   workflow_dispatch:
     inputs:
-      tags:
+      tag:
         type: string
         required: true
         default: "0.0.1-1"
