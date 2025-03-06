@@ -43,18 +43,18 @@ android {
         versionName flutterVersionName
     }
 
-    signingConfigs {
-        release {
-            keyAlias 'key'
-            storeFile System.getenv('GOOGLE_PLAY_KEYSTORE_PATH') ? file(System.getenv('GOOGLE_PLAY_KEYSTORE_PATH')) : null
-            keyPassword System.getenv('GOOGLE_PLAY_KEYSTORE_PASSWORD')
-            storePassword System.getenv('GOOGLE_PLAY_KEYSTORE_PASSWORD')
-        }
-    }
+    // signingConfigs {
+    //     release {
+    //         keyAlias 'key'
+    //         storeFile System.getenv('GOOGLE_PLAY_KEYSTORE_PATH') ? file(System.getenv('GOOGLE_PLAY_KEYSTORE_PATH')) : null
+    //         keyPassword System.getenv('GOOGLE_PLAY_KEYSTORE_PASSWORD')
+    //         storePassword System.getenv('GOOGLE_PLAY_KEYSTORE_PASSWORD')
+    //     }
+    // }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             resValue 'string', 'app_name', '"Nebula"'
         }
