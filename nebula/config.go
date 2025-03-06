@@ -40,7 +40,7 @@ func newConfig() *config {
 		},
 		Relay: configRelay{
 			UseRelays: true,
-			releys: []string{"192.168.120.1"},
+			Releys: []string{"192.168.120.1"},
 		},
 		Cipher: "aes",
 		SSHD: configSSHD{
@@ -209,5 +209,5 @@ type configFirewallRule struct {
 type configRelay struct {
 	AmRelay   bool     `yaml:"am_relay,omitempty"`
 	UseRelays bool     `yaml:"use_relays"`
-	relays    []string `yaml:"relays,omitempty"`
+	Relays    []string `yaml:"relays,omitempty"`
 }
