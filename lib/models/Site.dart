@@ -380,4 +380,25 @@ class Site {
       throw err.toString();
     }
   }
+
+  // 获取配置
+  Future<String> getConfig() async {
+    try {
+      // 从 Nebula 服务获取配置
+      final config = await NebulaSite.getConfig(id);
+      return config;
+    } catch (e) {
+      throw Exception('Failed to get config: $e');
+    }
+  }
+
+  // 保存配置
+  Future<void> saveConfig(String config) async {
+    try {
+      // 保存配置到 Nebula 服务
+      await NebulaSite.saveConfig(id, config);
+    } catch (e) {
+      throw Exception('Failed to save config: $e');
+    }
+  }
 }
