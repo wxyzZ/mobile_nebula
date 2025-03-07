@@ -5,7 +5,7 @@ on:
       tag:
         type: string
         required: true
-        default: "0.0.1-1"
+        default: "3"
   push:
     tags:
       # Only builds for tags with a meaningless build number suffix: v1.0.0-1
@@ -60,6 +60,7 @@ jobs:
       - name: Build Android
         run: |
           flutter build appbundle --build-number="$BUILD_NUMBER" --build-name="$BUILD_NAME"
+          ls -lR ./
 
           # verify that the github token didn't make it into the output
           mkdir -p build/app/test-android
@@ -72,7 +73,8 @@ jobs:
           bundletool build-apks \
             --bundle=build/app/outputs/bundle/release/app-release.aab \
             --output=build/app/outputs/apk/release/MobileNebula.apks \
-            --mode=universal \
+            --mode=universal 
+          ls -lR ./build/app/outputs/
           unzip -p build/app/outputs/apk/release/MobileNebula.apks universal.apk > build/app/outputs/apk/release/MobileNebula.apk
 
       - name: Collect Android artifacts
