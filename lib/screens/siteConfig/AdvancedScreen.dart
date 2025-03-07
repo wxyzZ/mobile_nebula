@@ -209,21 +209,148 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
           ConfigSection(
             children: <Widget>[
               ConfigPageItem(
-                content: Text('View rendered config'),
-                onPressed: () async {
+                content: const Text('View rendered config'),
+                onTap: () async {
                   try {
-                    var config = await widget.site.renderConfig();
-                    Utils.openPage(context, (context) {
-                      return RenderedConfigScreen(config: config, name: widget.site.name);
-                    });
-                  } catch (err) {
-                    Utils.popError(context, 'Failed to render the site config', err.toString());
+                    final config = await widget.site.getConfig();
+                    if (!mounted) return;
+
+                    await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return _ConfigDialog(
+                          initialConfig: config,
+                          onSave: (String newConfig) async {
+                            try {
+                              await widget.site.saveConfig(newConfig);
+                              if (!mounted) return;
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Config saved successfully')),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Failed to save config: $e')),
+                              );
+                            }
+                          },
+                        );
+                      },
+                    );
+                  } catch (e) {
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to load config: $e')),
+                    );
                   }
                 },
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ConfigDialog extends StatefulWidget {
+  final String initialConfig;
+  final Function(String) onSave;
+
+  const _ConfigDialog({
+    required this.initialConfig,
+    required this.onSave,
+  });
+
+  @override
+  State<_ConfigDialog> createState() => _ConfigDialogState();
+}
+
+class _ConfigDialogState extends State<_ConfigDialog> {
+  late TextEditingController _controller;
+  bool _isEditing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialConfig);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: MediaQuery.of(context).size.height * 0.8,
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Rendered Config',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(_isEditing ? Icons.save : Icons.edit),
+                  onPressed: () {
+                    if (_isEditing) {
+                      widget.onSave(_controller.text);
+                      Navigator.of(context).pop();
+                    } else {
+                      setState(() {
+                        _isEditing = true;
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: SingleChildScrollView(
+                child: _isEditing
+                    ? TextField(
+                        controller: _controller,
+                        maxLines: null,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.all(8.0),
+                        ),
+                        style: const TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 14,
+                        ),
+                      )
+                    : Text(
+                        widget.initialConfig,
+                        style: const TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 14,
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (!_isEditing)
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Close'),
+              ),
+          ],
+        ),
       ),
     );
   }
