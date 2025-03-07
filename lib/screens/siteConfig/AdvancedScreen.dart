@@ -210,7 +210,7 @@ class _AdvancedScreenState extends State<AdvancedScreen> {
             children: <Widget>[
               ConfigPageItem(
                 content: const Text('View rendered config'),
-                onTap: () async {
+                onPressed: () async {
                   try {
                     final config = await widget.site.getConfig();
                     if (!mounted) return;
